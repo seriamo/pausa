@@ -1,0 +1,13 @@
+# Build artifacts
+.build/
+Blink.app/
+
+# macOS
+.DS_Store
+
+# Screen recordings and media
+*.mov
+*.mp4
+
+# Internal docs / plans
+docs/
