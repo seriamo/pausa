@@ -37,6 +37,14 @@ Or for development:
 swift build
 ```
 
+## What's next?
+
+**Want Glint on the Mac App Store?** [Let me know →](https://github.com/seriamo/glint/issues/2)
+
+**Want a Windows version?** [Leave a +1 here →](https://github.com/seriamo/glint/issues/3)
+
+Both are possible depending on interest. A reaction on the issue is enough — no sign-up required.
+
 ## License
 
 MIT — see [LICENSE](LICENSE)
