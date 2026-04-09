@@ -39,9 +39,9 @@ swift build
 
 ## What's next?
 
-** 🍎 Want Glint on the Mac App Store?** [Let me know here](https://github.com/seriamo/glint/issues/1)
+**🍎 Want Glint on the Mac App Store?** [Let me know here](https://github.com/seriamo/glint/issues/1)
 
-** 💻 Want a Windows version?** [Leave me know here](https://github.com/seriamo/glint/issues/2)
+**💻 Want a Windows version?** [Let me know here](https://github.com/seriamo/glint/issues/2)
 
 Both are possible depending on interest. A reaction on the issue is enough — no sign-up required.
 
