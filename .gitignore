@@ -1,0 +1,21 @@
+# Build artifacts
+.build/
+Pausa.app/
+Pausa.dmg
+
+# macOS
+.DS_Store
+
+# Media (hosted on CDN)
+*.mov
+*.mp4
+*.gif
+*.png
+
+# Internal
+docs/
+CLAUDE.md
+.claude/
+.superpowers/
+.wrangler/
+.agents/
