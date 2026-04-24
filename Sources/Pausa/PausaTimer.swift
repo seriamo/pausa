@@ -97,7 +97,13 @@ final class PausaTimer {
             onPauseStateChanged?()
         }
 
-        guard !isPaused, !isScreenLocked else { return }
+        // Still fire onTick while paused with a fixed end time, so the
+        // "resumes in X:XX" label keeps counting down without needing a reopen.
+        if isPaused {
+            if pauseUntil != nil { onTick?() }
+            return
+        }
+        if isScreenLocked { return }
 
         secondsRemaining -= 1
         onTick?()

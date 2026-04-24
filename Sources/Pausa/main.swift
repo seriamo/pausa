@@ -82,7 +82,7 @@ func pausaMenuBarIcon(paused: Bool = false) -> NSImage {
 
 // Set to true to test the update banner with fake data. Set false before release.
 private let DEBUG_FAKE_UPDATE = false
-private let currentVersion = "1.0"
+private let currentVersion = "0.5.1"
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
@@ -418,7 +418,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func updateStatusLabel() {
         if pausaTimer.isPaused {
             if let until = pausaTimer.pauseUntil {
-                let remaining = max(0, Int(until.timeIntervalSinceNow))
+                // Round up so a 10-min pause shows 10:00 at t=0 (not 9:59 due to sub-second drift)
+                // and matches the ceiling semantics used by the active countdown.
+                let remaining = max(0, Int(until.timeIntervalSinceNow.rounded(.up)))
                 let m = remaining / 60
                 let s = remaining % 60
                 statusLabel.title = "Paused, resumes in \(String(format: "%d:%02d", m, s))"
@@ -635,7 +637,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         content.addSubview(titleField)
 
         // --- Version (smaller, secondary) ---
-        let versionField = NSTextField(labelWithString: "v1.0")
+        let versionField = NSTextField(labelWithString: "v\(currentVersion)")
         versionField.font = NSFont.systemFont(ofSize: 12)
         versionField.textColor = .secondaryLabelColor
         versionField.alignment = .center
@@ -769,7 +771,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             deviceId = newId
         }
 
-        let body: [String: String] = ["version": "1.0", "device_id": deviceId]
+        let body: [String: String] = ["version": currentVersion, "device_id": deviceId]
         request.httpBody = try? JSONSerialization.data(withJSONObject: body)
         URLSession.shared.dataTask(with: request).resume()
     }

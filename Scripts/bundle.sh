@@ -29,9 +29,9 @@ cat > "$CONTENTS/Info.plist" << 'PLIST'
     <key>CFBundleName</key>
     <string>Pausa</string>
     <key>CFBundleVersion</key>
-    <string>1.0</string>
+    <string>0.5.1</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.0</string>
+    <string>0.5.1</string>
     <key>LSUIElement</key>
     <true/>
     <key>CFBundleIconFile</key>
