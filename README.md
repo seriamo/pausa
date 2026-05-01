@@ -13,8 +13,6 @@ Requirement: macOS 14 (Sonoma) or later
 ### Download
 Grab the latest version of [Pausa](https://github.com/seriamo/pausa/releases/latest/download/Pausa.dmg). Open it, drag Pausa to Applications, done.
 
-> **Note:** Pausa is not notarized with Apple. On first launch, macOS may warn that it's from an unidentified developer. Follow the [steps here](https://github.com/st235/macos-unverified-signature-apps-installation) to bypass this.
-
 ### Build from source
 
 ```bash
