@@ -10,10 +10,10 @@
 
 Requirement: macOS 14 (Sonoma) or later
 
-### Download
+### Path A: Download (Easiest)
 Grab the latest version of [Pausa](https://github.com/seriamo/pausa/releases/latest/download/Pausa.dmg). Open it, drag Pausa to Applications, done.
 
-### Build from source
+### Path B: Build from source
 
 ```bash
 git clone https://github.com/seriamo/pausa
