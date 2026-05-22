@@ -55,6 +55,10 @@ A reaction on the issue is enough.
 
 Pausa is built by [Seriamo](https://seriamo.com). One problem, one product, built until it's right.
 
+## Privacy Policy
+
+We don't capture or store any personal data. See [Privacy Policy](https://seriamo.com/privacy).
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
