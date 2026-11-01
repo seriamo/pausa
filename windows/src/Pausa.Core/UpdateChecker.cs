@@ -1,4 +1,3 @@
-using System.Net.Http.Headers;
 using System.Text.Json;
 
 namespace Pausa.Core;
@@ -6,61 +5,54 @@ namespace Pausa.Core;
 public sealed record AvailableUpdate(string Version, Uri ReleaseUrl);
 
 /// <summary>
-/// Finds the newest published Windows release. macOS and Windows share the GitHub repo, so
-/// Windows releases are tagged windows-v* and are never marked "latest" (the macOS app reads
-/// /releases/latest).
+/// Asks updates.seriamo.com for the newest Windows release. Downloads stay on GitHub Releases
+/// (Windows tags are windows-v*; the macOS app owns the repo's "latest" release).
 /// </summary>
 public static class UpdateChecker
 {
-    public const string TagPrefix = "windows-v";
-
-    public static AvailableUpdate? FindNewer(string releasesJson, string currentVersion)
+    /// <summary>Parses a /releases/latest response and returns it if it's newer and supports this OS.</summary>
+    public static AvailableUpdate? FromLatest(string json, string currentVersion, Version osVersion)
     {
-        using var doc = JsonDocument.Parse(releasesJson);
-        if (doc.RootElement.ValueKind != JsonValueKind.Array) return null;
+        using var doc = JsonDocument.Parse(json);
+        var root = doc.RootElement;
+        if (root.ValueKind != JsonValueKind.Object) return null;
+        if (String(root, "platform") is { } platform && platform != Endpoints.Platform) return null;
 
-        AvailableUpdate? best = null;
-        foreach (var release in doc.RootElement.EnumerateArray())
-        {
-            if (IsTrue(release, "draft") || IsTrue(release, "prerelease")) continue;
-            if (release.ValueKind != JsonValueKind.Object) continue;
-            if (!release.TryGetProperty("tag_name", out var tagProp) || tagProp.ValueKind != JsonValueKind.String) continue;
-            var tag = tagProp.GetString()!;
-            if (!tag.StartsWith(TagPrefix, StringComparison.OrdinalIgnoreCase)) continue;
+        var version = String(root, "version");
+        if (version is null || !IsNumericVersion(version)) return null;
 
-            var version = tag[TagPrefix.Length..];
-            if (!IsNumericVersion(version)) continue;
+        var newer = root.TryGetProperty("update_available", out var flag) && flag.ValueKind is JsonValueKind.True or JsonValueKind.False
+            ? flag.GetBoolean()
+            : CompareVersions(version, currentVersion) > 0;
+        if (!newer || CompareVersions(version, currentVersion) <= 0) return null;
+        if (!Supports(String(root, "min_os_version"), osVersion)) return null;
 
-            var url = release.TryGetProperty("html_url", out var urlProp)
-                      && urlProp.ValueKind == JsonValueKind.String
-                      && Uri.TryCreate(urlProp.GetString(), UriKind.Absolute, out var parsed)
-                ? parsed
-                : Endpoints.ReleasesPage;
-
-            if (best is null || CompareVersions(version, best.Version) > 0) best = new AvailableUpdate(version, url);
-        }
-
-        return best is not null && CompareVersions(best.Version, currentVersion) > 0 ? best : null;
+        var page = Uri.TryCreate(String(root, "notes_url"), UriKind.Absolute, out var notes) && notes.Scheme == Uri.UriSchemeHttps
+            ? notes
+            : Endpoints.ReleasesPage;
+        return new AvailableUpdate(version, page);
     }
 
     public static async Task<AvailableUpdate?> CheckAsync(HttpClient http, string currentVersion, CancellationToken ct = default)
     {
         try
         {
-            using var request = new HttpRequestMessage(HttpMethod.Get, Endpoints.Releases);
-            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
-            // GitHub's API rejects requests without a User-Agent; HttpClient doesn't send one by default.
-            if (http.DefaultRequestHeaders.UserAgent.Count == 0) request.Headers.UserAgent.ParseAdd($"Pausa-Windows/{currentVersion}");
+            using var request = new HttpRequestMessage(HttpMethod.Get, Endpoints.LatestRelease(currentVersion));
+            request.Headers.Accept.ParseAdd("application/json");
             using var response = await http.SendAsync(request, ct).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return null;
             var json = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
-            return FindNewer(json, currentVersion);
+            return FromLatest(json, currentVersion, Environment.OSVersion.Version);
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or JsonException)
         {
             return null;
         }
     }
+
+    /// <summary>A missing or unreadable minimum never hides an update.</summary>
+    public static bool Supports(string? minimum, Version osVersion) =>
+        string.IsNullOrWhiteSpace(minimum) || !System.Version.TryParse(minimum, out var required) || osVersion >= required;
 
     /// <summary>Numeric, segment-wise comparison where missing segments count as zero ("1.0" == "1.0.0").</summary>
     public static int CompareVersions(string a, string b)
@@ -79,6 +71,6 @@ public static class UpdateChecker
     private static bool IsNumericVersion(string version) =>
         version.Length > 0 && version.Split('.').All(part => part.Length > 0 && part.All(char.IsAsciiDigit));
 
-    private static bool IsTrue(JsonElement element, string property) =>
-        element.TryGetProperty(property, out var value) && value.ValueKind == JsonValueKind.True;
+    private static string? String(JsonElement element, string property) =>
+        element.TryGetProperty(property, out var value) && value.ValueKind == JsonValueKind.String ? value.GetString() : null;
 }

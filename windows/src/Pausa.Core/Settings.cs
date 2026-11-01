@@ -13,7 +13,9 @@ public sealed class PausaSettings
     public string FlashColor { get; set; } = Core.FlashColor.Default.Name;
     public bool ActiveScreenOnly { get; set; }
     public bool PauseDuringFullscreen { get; set; } = true;
+    /// <summary>Anonymous install ID for the launch count. Deleted when usage sharing is turned off.</summary>
     public string? DeviceId { get; set; }
+    public bool ShareUsage { get; set; } = true;
     public bool HasLaunchedBefore { get; set; }
 
     /// <summary>Snaps every value onto a valid slider stop so hand-edited files can't break the UI.</summary>
@@ -83,5 +85,12 @@ public sealed class SettingsStore(string path)
             Save(settings);
         }
         return settings.DeviceId!;
+    }
+
+    /// <summary>Forgets the install ID, so turning usage sharing back on starts a fresh, unlinked one.</summary>
+    public void ResetDeviceId(PausaSettings settings)
+    {
+        settings.DeviceId = null;
+        Save(settings);
     }
 }

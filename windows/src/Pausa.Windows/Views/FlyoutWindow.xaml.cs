@@ -151,6 +151,7 @@ public partial class FlyoutWindow : Window
             ActiveScreenToggle.IsChecked = s.ActiveScreenOnly;
             FullscreenToggle.IsChecked = s.PauseDuringFullscreen;
             StartupToggle.IsChecked = _controller.LaunchAtSignIn;
+            ShareUsageToggle.IsChecked = s.ShareUsage;
         }
         finally
         {
@@ -223,11 +224,13 @@ public partial class FlyoutWindow : Window
     private void OnTestFlashClick(object sender, RoutedEventArgs e) => _controller.TestFlash();
     private void OnUpdateClick(object sender, RoutedEventArgs e) => _controller.OpenUpdate();
     private void OnAboutClick(object sender, RoutedEventArgs e) => _controller.ShowAbout();
+    private void OnFeedbackClick(object sender, RoutedEventArgs e) => _controller.SendFeedback();
     private void OnQuitClick(object sender, RoutedEventArgs e) => _controller.Quit();
     private void OnDismissHint(object sender, RoutedEventArgs e) => FirstRunHint.Visibility = Visibility.Collapsed;
     private void OnActiveScreenClick(object sender, RoutedEventArgs e) => _controller.SetActiveScreenOnly(ActiveScreenToggle.IsChecked == true);
     private void OnFullscreenClick(object sender, RoutedEventArgs e) => _controller.SetPauseDuringFullscreen(FullscreenToggle.IsChecked == true);
     private void OnStartupClick(object sender, RoutedEventArgs e) => _controller.LaunchAtSignIn = StartupToggle.IsChecked == true;
+    private void OnShareUsageClick(object sender, RoutedEventArgs e) => _controller.SetShareUsage(ShareUsageToggle.IsChecked == true);
 
     // ---- Showing ----
 

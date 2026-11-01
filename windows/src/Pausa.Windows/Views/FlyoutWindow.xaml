@@ -26,12 +26,21 @@
                     <TextBlock Text="Quit" VerticalAlignment="Center" />
                 </StackPanel>
             </Button>
-            <Button HorizontalAlignment="Left" Style="{StaticResource SubtleButtonStyle}" Click="OnAboutClick">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="&#xE946;" FontFamily="{StaticResource IconFont}" VerticalAlignment="Center" Margin="0,0,6,0" />
-                    <TextBlock Text="About Pausa" VerticalAlignment="Center" />
-                </StackPanel>
-            </Button>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                <Button Style="{StaticResource SubtleButtonStyle}" Click="OnAboutClick">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE946;" FontFamily="{StaticResource IconFont}" VerticalAlignment="Center" Margin="0,0,6,0" />
+                        <TextBlock Text="About Pausa" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource SubtleButtonStyle}" Click="OnFeedbackClick" Margin="4,0,0,0"
+                        ToolTip="Opens a short form on feedback.seriamo.com">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xED15;" FontFamily="{StaticResource IconFont}" VerticalAlignment="Center" Margin="0,0,6,0" />
+                        <TextBlock Text="Feedback" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
         </DockPanel>
     </Border>
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
@@ -151,6 +160,10 @@
                       Content="Pause during fullscreen apps" Click="OnFullscreenClick" />
             <CheckBox x:Name="StartupToggle" Style="{StaticResource ToggleSwitchStyle}"
                       Content="Launch at sign-in" Click="OnStartupClick" />
+            <CheckBox x:Name="ShareUsageToggle" Style="{StaticResource ToggleSwitchStyle}"
+                      Content="Share anonymous usage" Click="OnShareUsageClick"
+                      ToolTip="Counts launches by app version. No personal data."
+                      AutomationProperties.HelpText="Counts launches by app version. No personal data." />
         </StackPanel>
     </ScrollViewer>
     </DockPanel>

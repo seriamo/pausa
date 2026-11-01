@@ -23,6 +23,7 @@ public sealed class SettingsTests : IDisposable
         Assert.Equal("Red", s.FlashColor);
         Assert.False(s.ActiveScreenOnly);
         Assert.True(s.PauseDuringFullscreen);
+        Assert.True(s.ShareUsage);
         Assert.False(s.HasLaunchedBefore);
     }
 
@@ -89,21 +90,25 @@ public sealed class SettingsTests : IDisposable
         Assert.Equal(id, store.EnsureDeviceId(new SettingsStore(FilePath).Load()));
     }
 
-    [Fact]
-    public void Launch_payload_has_platform_and_stays_small()
-    {
-        var json = LaunchTracker.BuildPayload("1.0", "ABC");
-        using var doc = JsonDocument.Parse(json);
-        Assert.Equal("1.0", doc.RootElement.GetProperty("version").GetString());
-        Assert.Equal("ABC", doc.RootElement.GetProperty("device_id").GetString());
-        Assert.Equal("windows", doc.RootElement.GetProperty("platform").GetString());
-        Assert.True(json.Length < 1024);
-    }
-
     [Theory]
     [InlineData(1, 0, 0, "1.0")]
     [InlineData(1, 2, 0, "1.2")]
     [InlineData(1, 0, 3, "1.0.3")]
     public void Formats_display_version(int major, int minor, int build, string expected) =>
         Assert.Equal(expected, AppInfo.FormatVersion(new Version(major, minor, build)));
+
+    [Fact]
+    public void Turning_usage_off_forgets_the_install_id()
+    {
+        var store = new SettingsStore(FilePath);
+        var s = store.Load();
+        var first = store.EnsureDeviceId(s);
+        s.ShareUsage = false;
+        store.ResetDeviceId(s);
+
+        var reloaded = store.Load();
+        Assert.False(reloaded.ShareUsage);
+        Assert.Null(reloaded.DeviceId);
+        Assert.NotEqual(first, store.EnsureDeviceId(reloaded));
+    }
 }

@@ -11,7 +11,7 @@ The Windows version of Pausa: a tray app that flashes a gentle glow every few mi
 
 | Path | What |
 |---|---|
-| `src/Pausa.Core` | Platform-neutral logic (`net10.0`): timer, settings, step values, flash curve, overlay and flyout geometry, update check, launch ping. Builds and tests anywhere. |
+| `src/Pausa.Core` | Platform-neutral logic (`net10.0`): timer, settings, step values, flash curve, overlay and flyout geometry, update check, telemetry. Builds and tests anywhere. |
 | `src/Pausa.Windows` | The WPF app (`net10.0-windows`): tray icon, layered overlay windows, flyout, About window, startup toggle, smoke test. |
 | `tests/Pausa.Core.Tests` | xUnit tests for `Pausa.Core`. |
 | `installer/Pausa.iss` | Per-user Inno Setup installer. No admin prompt; installs to `%LOCALAPPDATA%\Programs\Pausa`. |
@@ -86,7 +86,7 @@ The tag must equal `windows-v` plus that version, or the build fails. The workfl
 - `Pausa-arm64.exe`
 - `SHA256SUMS.txt`
 
-Windows releases are **never marked latest**, because the macOS app's update check and the README's `Pausa.dmg` link read `/releases/latest`. A second workflow, [`release-latest-guard.yml`](../.github/workflows/release-latest-guard.yml), puts a macOS release back as latest if one is ever changed by hand. The Windows app finds its own updates by scanning recent releases for the newest `windows-v*` tag.
+Windows releases are **never marked latest**, because the macOS app's update check and the README's `Pausa.dmg` link read `/releases/latest`. A second workflow, [`release-latest-guard.yml`](../.github/workflows/release-latest-guard.yml), puts a macOS release back as latest if one is ever changed by hand. The Windows app asks `https://updates.seriamo.com/v1/products/pausa/releases/latest?platform=windows` once a day. That answer comes from the Seriamo release manifest (`seriamo-platform/workers/delivery/src/manifest.ts`), so add each Windows release there, with its per-architecture assets and SHA-256s, after CI publishes it. The website's download button uses the same manifest through `/v1/products/pausa/download?platform=windows&arch=x64|arm64`.
 
 ### Code signing
 
@@ -103,6 +103,10 @@ Tag builds run in the `windows-release` environment. That lets a single federate
 
 The workflow signs both `Pausa.exe` builds before packaging, then signs both installers. It doesn't sign the Inno uninstaller.
 
-## Telemetry
+## Telemetry and feedback
 
-On launch, the app sends the same anonymous ping as the macOS app to `https://api.seriamo.com/pausa/launch`, with `platform: "windows"` added. The ping holds a random device ID, the app version and the platform. Every network address is in [`Endpoints.cs`](src/Pausa.Core/Endpoints.cs).
+Pausa uses the same Seriamo endpoints on Windows and macOS. Every network address is in [`Endpoints.cs`](src/Pausa.Core/Endpoints.cs).
+
+- **Usage:** on launch, the app sends one `app_launch` event to `https://telemetry.seriamo.com/v1/events`. The event holds the app version, `platform: "windows"` and a random install ID. A failed send is retried once after 30 seconds with the same event ID. **Share anonymous usage** in the flyout turns this off and deletes the install ID.
+- **Updates:** a daily check against `updates.seriamo.com`. It hides releases whose `min_os_version` is newer than this Windows build.
+- **Feedback:** **Feedback** in the flyout footer and **Send feedback** in the tray menu open `https://feedback.seriamo.com/?product=pausa&platform=windows&version=…` in the browser.

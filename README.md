@@ -8,10 +8,12 @@
 
 ## Installation
 
-Requirement: macOS 14 (Sonoma) or later
+Requirements: macOS 14 (Sonoma) or later, or Windows 10 (version 1809) or later on x64 or Arm64.
 
 ### Path A: Download (Easiest)
-Grab the latest version of [Pausa](https://github.com/seriamo/pausa/releases/latest/download/Pausa.dmg). Open it, drag Pausa to Applications, done.
+**Mac:** grab the latest version of [Pausa](https://github.com/seriamo/pausa/releases/latest/download/Pausa.dmg). Open it, drag Pausa to Applications, done.
+
+**Windows:** download the installer for [x64](https://updates.seriamo.com/v1/products/pausa/download?platform=windows&arch=x64) or [Arm64](https://updates.seriamo.com/v1/products/pausa/download?platform=windows&arch=arm64) and run it. Pausa lives in the notification area. Portable builds are on the [releases page](https://github.com/seriamo/pausa/releases). Until the Windows build is code-signed, SmartScreen may say it doesn't recognize the app; choose **More info**, then **Run anyway**.
 
 ### Path B: Build from source
 
@@ -44,13 +46,6 @@ swift build
 
 ![pausa-colors](https://github.com/user-attachments/assets/7a71db36-824a-4551-8b11-b3d8e59f8dee)
 
-## What's next?
-
-**Interested in a Windows version?** [Let us know here.](https://github.com/seriamo/pausa/issues/2)
-
-A reaction on the issue is enough.
-
-
 ## About
 
 Pausa is built by [Seriamo](https://seriamo.com). One problem, one product, built until it's right.
@@ -59,9 +54,9 @@ Pausa is built by [Seriamo](https://seriamo.com). One problem, one product, buil
 
 We don't capture or store any personal data. Pausa talks to three Seriamo endpoints:
 
-- `telemetry.seriamo.com`: one `app_launch` event per launch with the app version and a random install ID. Turning off **Share Anonymous Usage** stops it and deletes the ID.
+- `telemetry.seriamo.com`: one `app_launch` event per launch with the app version and a random install ID. Turning off **Share Anonymous Usage** (Mac) or **Share anonymous usage** (Windows) stops it and deletes the ID.
 - `updates.seriamo.com`: checks for a newer release on launch. Downloads come from GitHub Releases.
-- `feedback.seriamo.com`: opens in your browser only when you choose **Send Feedback…**.
+- `feedback.seriamo.com`: opens in your browser only when you choose **Send Feedback…** (Mac) or **Feedback** (Windows).
 
 None of them store your IP address. See [Privacy Policy](https://seriamo.com/privacy).
 

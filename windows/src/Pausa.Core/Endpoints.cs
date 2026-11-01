@@ -1,18 +1,22 @@
 namespace Pausa.Core;
 
 /// <summary>
-/// Every network address the app talks to lives here, so moving to new
-/// update or telemetry endpoints is a one-file change.
+/// Every network address the app talks to lives here. All Seriamo apps share the same three
+/// hosts (telemetry, updates, feedback), so the privacy policy has one place to describe them.
 /// </summary>
 public static class Endpoints
 {
-    public static readonly Uri Launch = new("https://api.seriamo.com/pausa/launch");
+    public const string Product = "pausa";
+    public const string Platform = "windows";
 
-    // Same shared client token as the macOS app. Velvet rope, not a vault door.
-    public const string LaunchToken = "Q7cDfnufc3DKZSW7fkcSsgvb2dIsWtFT-upIM9GbF0s";
+    public static readonly Uri Telemetry = new("https://telemetry.seriamo.com/v1/events");
 
-    /// <summary>Recent releases (macOS and Windows share the repo; Windows tags are windows-v*).</summary>
-    public static readonly Uri Releases = new("https://api.github.com/repos/seriamo/pausa/releases?per_page=30");
+    public static Uri LatestRelease(string currentVersion) =>
+        new($"https://updates.seriamo.com/v1/products/{Product}/releases/latest" +
+            $"?current={Uri.EscapeDataString(currentVersion)}&platform={Platform}");
+
+    public static Uri FeedbackForm(string version) =>
+        new($"https://feedback.seriamo.com/?product={Product}&version={Uri.EscapeDataString(version)}&platform={Platform}");
 
     public static readonly Uri ReleasesPage = new("https://github.com/seriamo/pausa/releases");
 

@@ -45,6 +45,7 @@ internal static class TrayMenu
         menu.Items.Add(Item("Test flash now", controller.TestFlash));
         menu.Items.Add(Item("Settings", controller.ShowFlyout));
         menu.Items.Add(new Separator());
+        menu.Items.Add(Item("Send feedback", controller.SendFeedback));
         menu.Items.Add(Item("About Pausa", controller.ShowAbout));
         menu.Items.Add(Item("Quit", controller.Quit));
 

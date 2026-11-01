@@ -111,7 +111,6 @@ internal sealed class PausaController : IDisposable
     public void Start()
     {
         IsFirstRun = !Settings.HasLaunchedBefore;
-        var deviceId = _store.EnsureDeviceId(Settings);
         if (IsFirstRun)
         {
             Settings.HasLaunchedBefore = true;
@@ -139,7 +138,7 @@ internal sealed class PausaController : IDisposable
 
         if (_options.UseNetwork)
         {
-            _ = LaunchTracker.SendAsync(_http, AppInfo.Version, deviceId);
+            if (Settings.ShareUsage) _ = Telemetry.SendLaunchAsync(_http, AppInfo.Version, _store.EnsureDeviceId(Settings));
             _updateTimer.Start();
         }
         _ = CheckForUpdateAsync();
@@ -250,6 +249,15 @@ internal sealed class PausaController : IDisposable
         SaveAndNotify();
     }
 
+    /// <summary>Off stops the launch count and deletes the install ID.</summary>
+    public void SetShareUsage(bool value)
+    {
+        if (Settings.ShareUsage == value) return;
+        Settings.ShareUsage = value;
+        if (!value) Settings.DeviceId = null;
+        SaveAndNotify();
+    }
+
     public bool LaunchAtSignIn
     {
         get => _options.UseRegistry ? StartupManager.IsEnabled : _launchAtSignInFake;
@@ -316,6 +324,8 @@ internal sealed class PausaController : IDisposable
     }
 
     public void OpenUpdate() => OpenUrl((Update?.ReleaseUrl ?? Endpoints.ReleasesPage).ToString());
+
+    public void SendFeedback() => OpenUrl(Endpoints.FeedbackForm(AppInfo.Version).ToString());
 
     public static void OpenUrl(string url)
     {
