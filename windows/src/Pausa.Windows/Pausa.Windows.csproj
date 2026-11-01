@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>Pausa</AssemblyName>
+    <RootNamespace>Pausa.Windows</RootNamespace>
+    <ApplicationIcon>Assets\Pausa.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!-- Application.ThemeMode (Fluent) is still marked experimental in .NET 10. -->
+    <NoWarn>$(NoWarn);WPF0001</NoWarn>
+    <Description>Pausa: gentle screen-edge reminders to rest your eyes.</Description>
+  </PropertyGroup>
+
+  <!-- dotnet publish -r win-x64 (or win-arm64) produces one self-contained Pausa.exe. -->
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' != ''">
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <DebugType>embedded</DebugType>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\Pausa.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Pausa.Core\Pausa.Core.csproj" />
+  </ItemGroup>
+
+</Project>

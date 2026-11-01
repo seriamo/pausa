@@ -1,0 +1,31 @@
+<Window x:Class="Pausa.Windows.Views.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="About Pausa"
+        Icon="/Assets/Pausa.ico"
+        Width="320"
+        SizeToContent="Height"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        UseLayoutRounding="True"
+        Background="{DynamicResource SolidBackgroundFillColorBaseBrush}">
+    <StackPanel Margin="24,24,24,22">
+        <Image x:Name="AppIcon" Width="72" Height="72" HorizontalAlignment="Center" Margin="0,0,0,10"
+               RenderOptions.BitmapScalingMode="HighQuality" AutomationProperties.Name="Pausa icon" />
+        <TextBlock Text="Pausa" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"
+                   Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+        <TextBlock x:Name="VersionText" FontSize="12" HorizontalAlignment="Center" Margin="0,2,0,14"
+                   Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+        <TextBlock FontSize="12" TextAlignment="Center" TextWrapping="Wrap" LineHeight="18"
+                   Foreground="{DynamicResource TextFillColorSecondaryBrush}">
+            A focused eye-care utility for Windows. Monitors your screen time and nudges you toward breaks
+            at the right moments. Quietly, without friction.
+        </TextBlock>
+        <TextBlock FontSize="12" HorizontalAlignment="Center" Margin="0,18,0,0"
+                   Foreground="{DynamicResource TextFillColorSecondaryBrush}">
+            <Run Text="Built by" />
+            <Hyperlink x:Name="SeriamoLink" NavigateUri="https://seriamo.com" RequestNavigate="OnRequestNavigate"
+                       AutomationProperties.Name="Seriamo website">Seriamo</Hyperlink>
+        </TextBlock>
+    </StackPanel>
+</Window>

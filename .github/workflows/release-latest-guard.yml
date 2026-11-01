@@ -1,0 +1,30 @@
+name: Keep macOS release latest
+
+# The macOS app's update check and the README's Pausa.dmg link read /releases/latest.
+# If a windows-v* release becomes "latest" (e.g. published from the web UI with
+# "Set as the latest release" ticked), point "latest" back at the newest macOS release.
+
+on:
+  release:
+    types: [published, edited]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - name: Check releases/latest
+        run: |
+          latest=$(gh api "repos/$GH_REPO/releases/latest" --jq .tag_name)
+          echo "releases/latest -> $latest"
+          if [[ "$latest" != windows-v* ]]; then exit 0; fi
+          mac=$(gh api "repos/$GH_REPO/releases?per_page=50" --jq '[.[] | select(.draft == false and .prerelease == false and (.tag_name | startswith("windows-v") | not))][0].tag_name')
+          if [[ -z "$mac" ]]; then echo "::error::No macOS release to restore"; exit 1; fi
+          gh release edit "$mac" --latest
+          echo "::warning::releases/latest pointed at $latest; restored $mac"

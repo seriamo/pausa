@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Pausa.Core/Pausa.Core.csproj" />
+    <Project Path="src/Pausa.Windows/Pausa.Windows.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Pausa.Core.Tests/Pausa.Core.Tests.csproj" />
+  </Folder>
+</Solution>

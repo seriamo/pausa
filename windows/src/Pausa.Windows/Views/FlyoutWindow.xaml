@@ -1,0 +1,153 @@
+<Window x:Class="Pausa.Windows.Views.FlyoutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:interop="clr-namespace:Pausa.Windows.Interop"
+        xmlns:views="clr-namespace:Pausa.Windows.Views"
+        Title="Pausa"
+        Width="340"
+        SizeToContent="Height"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        Topmost="True"
+        UseLayoutRounding="True"
+        Background="{DynamicResource SolidBackgroundFillColorBaseBrush}"
+        BorderBrush="{DynamicResource SurfaceStrokeColorFlyoutBrush}"
+        BorderThickness="1">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+        <StackPanel x:Name="Root" Margin="16,14,16,12">
+
+            <!-- Update available -->
+            <Button x:Name="UpdateBanner" Visibility="Collapsed" Margin="0,0,0,12"
+                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                    Style="{DynamicResource AccentButtonStyle}" Click="OnUpdateClick">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="&#xE896;" FontFamily="{StaticResource IconFont}" VerticalAlignment="Center" Margin="0,0,8,0" />
+                    <TextBlock x:Name="UpdateText" VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
+
+            <!-- First-run tip: Windows hides new tray icons in the overflow. -->
+            <Border x:Name="FirstRunHint" Visibility="Collapsed" Margin="0,0,0,12" Padding="12,8,4,8" CornerRadius="6"
+                    BorderThickness="1"
+                    Background="{DynamicResource SystemFillColorAttentionBackgroundBrush}"
+                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}">
+                <DockPanel>
+                    <Button DockPanel.Dock="Right" VerticalAlignment="Top" Style="{StaticResource SubtleButtonStyle}"
+                            ToolTip="Dismiss" AutomationProperties.Name="Dismiss tip" Click="OnDismissHint">
+                        <TextBlock Text="&#xE711;" FontFamily="{StaticResource IconFont}" FontSize="10" />
+                    </Button>
+                    <TextBlock Style="{StaticResource CaptionStyle}" Foreground="{DynamicResource TextFillColorPrimaryBrush}" VerticalAlignment="Center">
+                        Pausa runs in the notification area. To keep it in view, drag its icon from the
+                        <Run FontFamily="{StaticResource IconFont}" Text="&#xE70E;" /> overflow onto the taskbar.
+                    </TextBlock>
+                </DockPanel>
+            </Border>
+
+            <!-- Header -->
+            <Grid Margin="0,0,0,14">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Border Width="36" Height="36" CornerRadius="8" Background="{StaticResource BrandTileBrush}" VerticalAlignment="Center">
+                    <Viewbox Margin="6">
+                        <Canvas Width="22" Height="22">
+                            <Path Data="{x:Static interop:Glyph.Eye}" Stroke="White" StrokeThickness="1.3" Opacity="0.92" />
+                            <Path Data="{x:Static interop:Glyph.Star}" Fill="{StaticResource StarBrush}" />
+                        </Canvas>
+                    </Viewbox>
+                </Border>
+                <StackPanel Grid.Column="1" Margin="10,0,8,0" VerticalAlignment="Center">
+                    <TextBlock Text="Pausa" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+                    <TextBlock x:Name="StatusText" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               TextTrimming="CharacterEllipsis" AutomationProperties.LiveSetting="Polite" />
+                </StackPanel>
+                <Button x:Name="PauseButton" Grid.Column="2" VerticalAlignment="Center" Click="OnPauseClick"
+                        AutomationProperties.Name="Pause">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE769;" FontFamily="{StaticResource IconFont}" VerticalAlignment="Center" Margin="0,0,6,0" />
+                        <TextBlock Text="Pause" VerticalAlignment="Center" />
+                        <TextBlock Text="&#xE70D;" FontFamily="{StaticResource IconFont}" FontSize="10" VerticalAlignment="Center" Margin="8,1,0,0" />
+                    </StackPanel>
+                </Button>
+                <Button x:Name="ResumeButton" Grid.Column="2" VerticalAlignment="Center" Visibility="Collapsed"
+                        Style="{DynamicResource AccentButtonStyle}" Click="OnResumeClick">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE768;" FontFamily="{StaticResource IconFont}" VerticalAlignment="Center" Margin="0,0,6,0" />
+                        <TextBlock Text="Resume" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+            </Grid>
+
+            <!-- Interval -->
+            <DockPanel>
+                <TextBlock x:Name="IntervalValue" DockPanel.Dock="Right" Style="{StaticResource ValueLabelStyle}" />
+                <TextBlock Text="Interval" Style="{StaticResource SectionLabelStyle}" />
+            </DockPanel>
+            <Slider x:Name="IntervalSlider" Minimum="0" Maximum="6" TickFrequency="1" IsSnapToTickEnabled="True"
+                    SmallChange="1" LargeChange="1" Margin="0,2,0,10"
+                    AutomationProperties.Name="Interval" ValueChanged="OnIntervalChanged" />
+
+            <!-- Mode -->
+            <TextBlock Text="Flash mode" Style="{StaticResource SectionLabelStyle}" Margin="0,0,0,6" />
+            <UniformGrid x:Name="ModeCards" Columns="2" Margin="-4,0,-4,12" />
+
+            <!-- Color -->
+            <TextBlock Text="Flash color" Style="{StaticResource SectionLabelStyle}" Margin="0,0,0,4" />
+            <StackPanel x:Name="Swatches" Orientation="Horizontal" Margin="-5,0,0,10" />
+
+            <!-- Intensity -->
+            <DockPanel>
+                <TextBlock x:Name="IntensityValue" DockPanel.Dock="Right" Style="{StaticResource ValueLabelStyle}" />
+                <TextBlock Text="Intensity" Style="{StaticResource SectionLabelStyle}" />
+            </DockPanel>
+            <Slider x:Name="IntensitySlider" Minimum="0" Maximum="2" TickFrequency="1" IsSnapToTickEnabled="True"
+                    SmallChange="1" LargeChange="1" Margin="0,2,0,10"
+                    AutomationProperties.Name="Intensity" ValueChanged="OnIntensityChanged" />
+
+            <!-- Duration -->
+            <DockPanel>
+                <TextBlock x:Name="DurationValue" DockPanel.Dock="Right" Style="{StaticResource ValueLabelStyle}" />
+                <TextBlock Text="Duration" Style="{StaticResource SectionLabelStyle}" />
+            </DockPanel>
+            <Slider x:Name="DurationSlider" Minimum="0" Maximum="6" TickFrequency="1" IsSnapToTickEnabled="True"
+                    SmallChange="1" LargeChange="1" Margin="0,2,0,12"
+                    AutomationProperties.Name="Duration" ValueChanged="OnDurationChanged" />
+
+            <Button HorizontalAlignment="Stretch" Click="OnTestFlashClick">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="&#xE945;" FontFamily="{StaticResource IconFont}" VerticalAlignment="Center" Margin="0,0,8,0" />
+                    <TextBlock Text="Test flash now" VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
+
+            <Border Style="{StaticResource DividerStyle}" />
+
+            <CheckBox x:Name="ActiveScreenToggle" Style="{StaticResource ToggleSwitchStyle}"
+                      Content="Flash active screen only" Click="OnActiveScreenClick" />
+            <CheckBox x:Name="FullscreenToggle" Style="{StaticResource ToggleSwitchStyle}"
+                      Content="Pause during fullscreen apps" Click="OnFullscreenClick" />
+            <CheckBox x:Name="StartupToggle" Style="{StaticResource ToggleSwitchStyle}"
+                      Content="Launch at sign-in" Click="OnStartupClick" />
+
+            <Border Style="{StaticResource DividerStyle}" Margin="-16,10,-16,6" />
+
+            <DockPanel>
+                <Button DockPanel.Dock="Right" Style="{StaticResource SubtleButtonStyle}" Click="OnQuitClick">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE7E8;" FontFamily="{StaticResource IconFont}" VerticalAlignment="Center" Margin="0,0,6,0" />
+                        <TextBlock Text="Quit" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <Button HorizontalAlignment="Left" Style="{StaticResource SubtleButtonStyle}" Click="OnAboutClick">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE946;" FontFamily="{StaticResource IconFont}" VerticalAlignment="Center" Margin="0,0,6,0" />
+                        <TextBlock Text="About Pausa" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+            </DockPanel>
+        </StackPanel>
+    </ScrollViewer>
+</Window>
