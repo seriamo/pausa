@@ -4,7 +4,8 @@
 
 **More than half of adults experience dry eye symptoms, and most never seek help**. Staring at screens reduces your blink rate, making it worse. Pausa is a lightweight macOS menu-bar app that flashes a gentle overlay on your screen every few minutes, just enough to break the staring habit and give your eyes a rest. Based on the 20-20-20 rule recommended by [eye care professionals](https://www.aoa.org/AOA/Images/Patients/Eye%20Conditions/20-20-20-rule.pdf).
 
-![pausa-hero](https://github.com/user-attachments/assets/20b50dfc-9002-4e75-bed6-badd4cff0d32)
+
+https://github.com/user-attachments/assets/1ab4e725-e107-4e05-961b-056432e4192a
 
 ## Installation
 
