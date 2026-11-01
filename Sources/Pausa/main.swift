@@ -95,8 +95,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var launchAtLoginItem: NSMenuItem!
     private var respectDNDItem: NSMenuItem!
     private var activeScreenItem: NSMenuItem!
+    private var shareUsageItem: NSMenuItem!
     private var aboutWindow: NSWindow?
     private var updateItem: NSMenuItem?
+    private var updatePage = SeriamoEndpoints.releasesPage
     private var updateSeparator: NSMenuItem?
     // Stored so pause item can swap between submenu ↔ direct action
     private var storedPauseSubmenu: NSMenu!
@@ -124,7 +126,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     ]
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        trackLaunch()
+        Telemetry.recordLaunch(version: currentVersion)
         // Load saved preferences
         let prefs = Preferences.shared
         pausaTimer.intervalSeconds    = prefs.intervalSeconds
@@ -314,10 +316,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         launchAtLoginItem.state = StartupManager.shared.isEnabled ? .on : .off
         settingsMenu.addItem(launchAtLoginItem)
 
+        // Anonymous usage
+        shareUsageItem = NSMenuItem(title: "Share Anonymous Usage", action: #selector(toggleShareUsage), keyEquivalent: "")
+        shareUsageItem.target = self
+        shareUsageItem.state = prefs.shareUsage ? .on : .off
+        let usageDescription = "Counts launches by app version. No personal data."
+        if #available(macOS 14.4, *) {
+            shareUsageItem.subtitle = usageDescription
+        } else {
+            shareUsageItem.toolTip = usageDescription
+        }
+        settingsMenu.addItem(shareUsageItem)
+
         settingsMenuItem.submenu = settingsMenu
         menu.addItem(settingsMenuItem)
 
         menu.addItem(.separator())
+
+        // --- Feedback ---
+        let feedbackItem = NSMenuItem(title: "Send Feedback…", action: #selector(sendFeedback), keyEquivalent: "")
+        feedbackItem.target = self
+        menu.addItem(feedbackItem)
 
         // --- About — with eye icon ---
         let aboutItem = NSMenuItem(title: "About Pausa", action: #selector(showAbout), keyEquivalent: "")
@@ -598,6 +617,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         launchAtLoginItem.state = newValue ? .on : .off
     }
 
+    @objc private func toggleShareUsage() {
+        let newValue = !Preferences.shared.shareUsage
+        Preferences.shared.shareUsage = newValue
+        if !newValue { Telemetry.resetInstallId() }
+        shareUsageItem.state = newValue ? .on : .off
+    }
+
+    @objc private func sendFeedback() {
+        NSWorkspace.shared.open(SeriamoEndpoints.feedbackForm(version: currentVersion))
+    }
+
     // MARK: - About
 
     @objc private func showAbout() {
@@ -704,25 +734,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
 
-        let url = URL(string: "https://api.github.com/repos/seriamo/pausa/releases/latest")!
-        var request = URLRequest(url: url)
-        request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
-        request.timeoutInterval = 10
-
-        URLSession.shared.dataTask(with: request) { [weak self] data, _, error in
-            guard error == nil, let data,
-                  let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                  let tagName = json["tag_name"] as? String else { return }
-
-            let remote = tagName.trimmingCharacters(in: CharacterSet(charactersIn: "vV"))
-            if remote.compare(currentVersion, options: .numeric) == .orderedDescending {
-                DispatchQueue.main.async {
-                    MainActor.assumeIsolated {
-                        self?.showUpdateAvailable(version: remote)
-                    }
+        UpdateChecker.check(currentVersion: currentVersion) { [weak self] update in
+            DispatchQueue.main.async {
+                MainActor.assumeIsolated {
+                    self?.updatePage = update.page
+                    self?.showUpdateAvailable(version: update.version)
                 }
             }
-        }.resume()
+        }
     }
 
     private func showUpdateAvailable(version: String) {
@@ -746,34 +765,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc private func openUpdatePage() {
-        NSWorkspace.shared.open(URL(string: "https://github.com/seriamo/pausa/releases/latest")!)
-    }
-
-    // MARK: - Anonymous launch tracking
-
-    private func trackLaunch() {
-        guard let url = URL(string: "https://api.seriamo.com/pausa/launch") else { return }
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        // Velvet rope, not a vault door
-        request.setValue("Q7cDfnufc3DKZSW7fkcSsgvb2dIsWtFT-upIM9GbF0s", forHTTPHeaderField: "x-launch-token")
-        request.timeoutInterval = 10
-
-        // Persistent anonymous device ID
-        let key = "com.seriamo.pausa.deviceId"
-        let deviceId: String
-        if let existing = UserDefaults.standard.string(forKey: key) {
-            deviceId = existing
-        } else {
-            let newId = UUID().uuidString
-            UserDefaults.standard.set(newId, forKey: key)
-            deviceId = newId
-        }
-
-        let body: [String: String] = ["version": currentVersion, "device_id": deviceId]
-        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
-        URLSession.shared.dataTask(with: request).resume()
+        NSWorkspace.shared.open(updatePage)
     }
 
     // MARK: - Screen lock

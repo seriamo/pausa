@@ -34,7 +34,7 @@ swift build
 - **Skips fullscreen apps**: no interruptions during presentations, video, or games
 - **Multi-monitor support**: flash all screens or active screen only
 - **Countdown in menu bar**: shows seconds remaining during a flash
-- **Runs entirely on your Mac**: no accounts, no subscriptions, no tracking. Anonymous ping on app launch to track version and activation.
+- **Runs entirely on your Mac**: no accounts, no subscriptions, no tracking. An anonymous launch count (app version and a random install ID) helps us see which versions are in use; turn it off in **Settings → Share Anonymous Usage**.
 - **Launch automatically at login**: set it once, forget it
 - **Three flash modes**: solid menu bar, menu bar with glow, or full screen border
 
@@ -57,7 +57,13 @@ Pausa is built by [Seriamo](https://seriamo.com). One problem, one product, buil
 
 ## Privacy Policy
 
-We don't capture or store any personal data. See [Privacy Policy](https://seriamo.com/privacy).
+We don't capture or store any personal data. Pausa talks to three Seriamo endpoints:
+
+- `telemetry.seriamo.com`: one `app_launch` event per launch with the app version and a random install ID. Turning off **Share Anonymous Usage** stops it and deletes the ID.
+- `updates.seriamo.com`: checks for a newer release on launch. Downloads come from GitHub Releases.
+- `feedback.seriamo.com`: opens in your browser only when you choose **Send Feedback…**.
+
+None of them store your IP address. See [Privacy Policy](https://seriamo.com/privacy).
 
 ## License
 

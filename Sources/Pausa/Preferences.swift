@@ -16,6 +16,7 @@ final class Preferences {
         case activeScreenOnly
         case respectDND
         case launchAtLogin
+        case shareUsage
     }
 
     var intervalSeconds: Int {
@@ -62,6 +63,12 @@ final class Preferences {
     var launchAtLogin: Bool {
         get { defaults.object(forKey: Key.launchAtLogin.rawValue) as? Bool ?? false }
         set { defaults.set(newValue, forKey: Key.launchAtLogin.rawValue) }
+    }
+
+    /// Anonymous launch count (version + random install ID). On by default; see README.
+    var shareUsage: Bool {
+        get { defaults.object(forKey: Key.shareUsage.rawValue) as? Bool ?? true }
+        set { defaults.set(newValue, forKey: Key.shareUsage.rawValue) }
     }
 
     /// Map stored color name → NSColor
