@@ -72,12 +72,23 @@ Name: "{autoprograms}\Pausa"; Filename: "{app}\Pausa.exe"; Comment: "Gentle remi
 Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "Pausa"; ValueData: """{app}\Pausa.exe"""; Tasks: startup; Flags: uninsdeletevalue
 
 [Run]
-Filename: "{app}\Pausa.exe"; Description: "Open Pausa"; Flags: nowait postinstall
+Filename: "{app}\Pausa.exe"; Description: "Open Pausa"; Flags: nowait postinstall; Check: ShouldLaunch
 
 [UninstallRun]
 Filename: "{sys}\taskkill.exe"; Parameters: "/IM Pausa.exe /F"; Flags: runhidden; RunOnceId: "StopPausa"
 
 [Code]
+// Silent installs (e.g. upgrades) reopen Pausa; /NOLAUNCH skips that (CI uses it to avoid launch pings).
+function ShouldLaunch: Boolean;
+var
+  I: Integer;
+begin
+  Result := True;
+  for I := 1 to ParamCount do
+    if CompareText(ParamStr(I), '/NOLAUNCH') = 0 then
+      Result := False;
+end;
+
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 begin
   if CurUninstallStep = usPostUninstall then

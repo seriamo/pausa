@@ -14,8 +14,28 @@
         Background="{DynamicResource SolidBackgroundFillColorBaseBrush}"
         BorderBrush="{DynamicResource SurfaceStrokeColorFlyoutBrush}"
         BorderThickness="1">
+    <DockPanel>
+    <!-- Pinned footer (like Quick Settings): stays visible when the settings scroll on short screens. -->
+    <Border DockPanel.Dock="Bottom" BorderThickness="0,1,0,0" Padding="16,6"
+            BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}"
+            Background="{DynamicResource CardBackgroundFillColorSecondaryBrush}">
+        <DockPanel>
+            <Button DockPanel.Dock="Right" Style="{StaticResource SubtleButtonStyle}" Click="OnQuitClick">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="&#xE7E8;" FontFamily="{StaticResource IconFont}" VerticalAlignment="Center" Margin="0,0,6,0" />
+                    <TextBlock Text="Quit" VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
+            <Button HorizontalAlignment="Left" Style="{StaticResource SubtleButtonStyle}" Click="OnAboutClick">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="&#xE946;" FontFamily="{StaticResource IconFont}" VerticalAlignment="Center" Margin="0,0,6,0" />
+                    <TextBlock Text="About Pausa" VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
+        </DockPanel>
+    </Border>
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
-        <StackPanel x:Name="Root" Margin="16,14,16,12">
+        <StackPanel x:Name="Root" Margin="16,14,16,10">
 
             <!-- Update available -->
             <Button x:Name="UpdateBanner" Visibility="Collapsed" Margin="0,0,0,12"
@@ -131,23 +151,7 @@
                       Content="Pause during fullscreen apps" Click="OnFullscreenClick" />
             <CheckBox x:Name="StartupToggle" Style="{StaticResource ToggleSwitchStyle}"
                       Content="Launch at sign-in" Click="OnStartupClick" />
-
-            <Border Style="{StaticResource DividerStyle}" Margin="-16,10,-16,6" />
-
-            <DockPanel>
-                <Button DockPanel.Dock="Right" Style="{StaticResource SubtleButtonStyle}" Click="OnQuitClick">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="&#xE7E8;" FontFamily="{StaticResource IconFont}" VerticalAlignment="Center" Margin="0,0,6,0" />
-                        <TextBlock Text="Quit" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
-                <Button HorizontalAlignment="Left" Style="{StaticResource SubtleButtonStyle}" Click="OnAboutClick">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="&#xE946;" FontFamily="{StaticResource IconFont}" VerticalAlignment="Center" Margin="0,0,6,0" />
-                        <TextBlock Text="About Pausa" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
-            </DockPanel>
         </StackPanel>
     </ScrollViewer>
+    </DockPanel>
 </Window>

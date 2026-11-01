@@ -33,9 +33,9 @@ jobs:
     outputs:
       version: ${{ steps.version.outputs.version }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-dotnet@v5
+      - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.0.x
 
@@ -81,7 +81,7 @@ jobs:
 
       - name: Upload smoke results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: smoke-x64
           path: windows/smoke
@@ -129,6 +129,38 @@ jobs:
             Copy-Item "windows/artifacts/publish/win-$arch/Pausa.exe" "windows/artifacts/dist/Pausa-$arch.exe"
           }
 
+      - name: Installer round trip (x64)
+        shell: pwsh
+        run: |
+          $log = Join-Path $env:RUNNER_TEMP 'install.log'
+          $p = Start-Process 'windows/artifacts/dist/Pausa-Setup-x64.exe' -Wait -PassThru `
+            -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/NOLAUNCH', '/TASKS=startup', "/LOG=`"$log`""
+          if ($p.ExitCode) { Get-Content $log -Tail 40; throw "Setup exited with $($p.ExitCode)" }
+
+          $app = Join-Path $env:LOCALAPPDATA 'Programs\Pausa'
+          $runKey = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run'
+          if (-not (Test-Path "$app\Pausa.exe")) { throw "Pausa.exe not installed to $app" }
+          $run = Get-ItemPropertyValue $runKey -Name Pausa
+          if ($run -ne "`"$app\Pausa.exe`"") { throw "Unexpected Run value: $run" }
+          if (-not (Test-Path (Join-Path ([Environment]::GetFolderPath('Programs')) 'Pausa.lnk'))) { throw 'Start menu shortcut missing' }
+          if (Get-Process Pausa -ErrorAction SilentlyContinue) { throw 'Setup started Pausa despite /NOLAUNCH' }
+          Write-Host "Installed to $app; Run = $run"
+
+          # Uninstall while a (network-free) smoke-test instance runs: it must be closed and cleaned up.
+          Start-Process "$app\Pausa.exe" -ArgumentList '--smoke-test', "`"$env:RUNNER_TEMP\smoke-installed`""
+          Start-Sleep -Seconds 3
+          # The uninstaller re-launches itself from %TEMP% and exits, so poll for its Uninstall key to go.
+          $uninstKey = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\{C95DD07F-9CA3-4C88-9A05-FDB6D59C7F2A}_is1'
+          if (-not (Test-Path $uninstKey)) { throw 'Uninstall registration missing' }
+          Start-Process "$app\unins000.exe" -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART' -Wait
+          for ($i = 0; $i -lt 60 -and ((Test-Path $uninstKey) -or (Test-Path "$app\Pausa.exe")); $i++) { Start-Sleep -Seconds 1 }
+          Start-Sleep -Seconds 2
+          if (Test-Path $uninstKey) { throw 'Uninstall did not finish within 60s' }
+          if (Test-Path "$app\Pausa.exe") { throw 'Pausa.exe still present after uninstall' }
+          if (Get-Process Pausa -ErrorAction SilentlyContinue) { throw 'Pausa still running after uninstall' }
+          if ((Get-ItemProperty $runKey).PSObject.Properties.Name -contains 'Pausa') { throw 'Run value left behind' }
+          Write-Host 'Uninstall removed the app, its process and the Run value'
+
       - name: Sign installers
         if: vars.AZURE_SIGNING_ACCOUNT != ''
         uses: azure/artifact-signing-action@v2
@@ -160,17 +192,19 @@ jobs:
           }
 
       - name: Upload build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: pausa-windows-${{ steps.version.outputs.version }}
           path: windows/artifacts/dist
           if-no-files-found: error
 
+  # Launch-and-run check for the Arm build. The windows-11-arm image sits on the first-run
+  # privacy screen with no taskbar, so its screenshots aren't meaningful; x64 does the visuals.
   smoke-arm64:
     needs: build
     runs-on: windows-11-arm
     steps:
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v8
         with:
           name: pausa-windows-${{ needs.build.outputs.version }}
           path: dist
@@ -186,7 +220,7 @@ jobs:
 
       - name: Upload smoke results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: smoke-arm64
           path: smoke
@@ -204,7 +238,7 @@ jobs:
       TAG: ${{ github.ref_name }}
       VERSION: ${{ needs.build.outputs.version }}
     steps:
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v8
         with:
           name: pausa-windows-${{ needs.build.outputs.version }}
           path: dist
