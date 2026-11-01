@@ -34,6 +34,20 @@ and the flash tints are all drawn by AppKit and Pausa, not mocked up. The macOS
 screen-recording dot was painted out of the menu bar where it appeared. The rig itself was
 throwaway and isn't in the repo.
 
+### Promo video
+
+A 33.5s promo was made with the `seriamo-product-video` skill, outside the repo:
+
+- `~/videos/pausa-brief/video.json` is the brief, with `screens/` holding the captures it uses.
+- `~/videos/pausa-brief/patch_spotlight.py` zooms the spotlight scene in on the menu bar. The
+  laptop template's default framing leaves the menu too small to read. Re-run it after every
+  `new_video.py --force`.
+- `~/videos/pausa-promo/renders/` has `pausa-promo.mp4`, the hero still and the social image.
+
+The music bed is a local MusicGen draft. Its weights are CC BY-NC, so it's for review only.
+Replace it with a licensed bed (for example from the HeyGen catalog) before the video is
+published or used as an App Store preview.
+
 ## Before submitting: app changes
 
 The Mac App Store build needs these. They belong with the planned update and telemetry endpoint
@@ -103,3 +117,5 @@ node attach-build.mjs --app com.seriamo.pausa --build <n> --platform MAC_OS --wa
 - **Age rating.** `healthOrWellnessTopics` is set to true because Pausa is an eye-strain habit
   tool. Check the rating App Store Connect gives it, and set it to false if that seems too strong.
 - **Screenshot 4.** It shows purple being previewed. Green and orange captures exist too.
+- **Video.** The end card says "Free". Change it if Pausa won't be free. The storyboard wasn't
+  reviewed before polish, so check the cut as a whole.
