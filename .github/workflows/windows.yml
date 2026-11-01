@@ -27,6 +27,11 @@ env:
 jobs:
   build:
     runs-on: windows-latest
+    # Release tags run in an environment so one Azure federated credential
+    # (subject repo:<owner>/<repo>:environment:windows-release) covers every release.
+    environment: ${{ startsWith(github.ref, 'refs/tags/windows-v') && 'windows-release' || '' }}
+    env:
+      SIGN: ${{ startsWith(github.ref, 'refs/tags/windows-v') && vars.AZURE_SIGNING_ACCOUNT != '' }}
     permissions:
       contents: read
       id-token: write
@@ -88,7 +93,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Azure login (signing)
-        if: vars.AZURE_SIGNING_ACCOUNT != ''
+        if: env.SIGN == 'true'
         uses: azure/login@v3
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
@@ -96,7 +101,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Sign Pausa.exe
-        if: vars.AZURE_SIGNING_ACCOUNT != ''
+        if: env.SIGN == 'true'
         uses: azure/artifact-signing-action@v2
         with:
           endpoint: ${{ vars.AZURE_SIGNING_ENDPOINT }}
@@ -162,7 +167,7 @@ jobs:
           Write-Host 'Uninstall removed the app, its process and the Run value'
 
       - name: Sign installers
-        if: vars.AZURE_SIGNING_ACCOUNT != ''
+        if: env.SIGN == 'true'
         uses: azure/artifact-signing-action@v2
         with:
           endpoint: ${{ vars.AZURE_SIGNING_ENDPOINT }}
