@@ -48,9 +48,20 @@ A 33.5s promo was made with the `seriamo-product-video` skill, outside the repo:
   `make_flash_assets.py`. Re-run it after `patch_spotlight.py`, then re-run `cues.py`.
 - `~/videos/pausa-promo/renders/` has `pausa-promo.mp4`, the hero still and the social image.
 
-The music bed is a local MusicGen draft. Its weights are CC BY-NC, so it's for review only.
-Replace it with a licensed bed (for example from the HeyGen catalog) before the video is
-published or used as an App Store preview.
+The music bed is "A Baby Story" by Mixkit (track 530, `https://assets.mixkit.co/music/530/530.mp3`),
+under the [Mixkit Stock Music Free License](https://mixkit.co/license/modal/musicFree/). That licence
+allows commercial use on the web, social media, ads and YouTube with no attribution. It doesn't
+allow registering the music with Content ID, claiming it as our own, or using it on TV, radio, CDs
+or in games. If a platform flags the video, point the claim to team@mixkit.co. The bed is the first
+36s of the track, converted to 48 kHz WAV and mixed under the SFX by `cues.py`.
+
+The video isn't an App Store preview. Previews must be 15 to 30 seconds of footage captured from
+the app, and this film runs 33.5s and is illustrated.
+
+The film plays on seriamo.com/pausa as a 1280×720 web encode (`pausa-promo-web.mp4`), with
+`pausa-poster.jpg` and English captions in `pausa-captions.vtt`. It follows the Pronto pattern:
+poster with a play button, sound only after a press, and no autoplay. The flash in the video pulses
+at about 1.5 Hz and fades smoothly, well under the 3 flashes per second photosensitivity limit.
 
 ## Before submitting: app changes
 
