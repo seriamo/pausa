@@ -42,6 +42,10 @@ A 33.5s promo was made with the `seriamo-product-video` skill, outside the repo:
 - `~/videos/pausa-brief/patch_spotlight.py` zooms the spotlight scene in on the menu bar. The
   laptop template's default framing leaves the menu too small to read. Re-run it after every
   `new_video.py --force`.
+- `~/videos/pausa-brief/patch_flash.py` makes every flashed screen pulse the way
+  `FlashOverlay.pulse()` does: 0.3s up, 0.35s down, with the menu-bar countdown ticking. It
+  crossfades each flashed capture over its untinted base, using layers in `flash/` built by
+  `make_flash_assets.py`. Re-run it after `patch_spotlight.py`, then re-run `cues.py`.
 - `~/videos/pausa-promo/renders/` has `pausa-promo.mp4`, the hero still and the social image.
 
 The music bed is a local MusicGen draft. Its weights are CC BY-NC, so it's for review only.
