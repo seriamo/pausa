@@ -82,7 +82,7 @@ func pausaMenuBarIcon(paused: Bool = false) -> NSImage {
 
 // Set to true to test the update banner with fake data. Set false before release.
 private let DEBUG_FAKE_UPDATE = false
-private let currentVersion = "1.0"
+private let currentVersion = "1.1"
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
