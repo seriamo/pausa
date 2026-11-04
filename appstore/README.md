@@ -2,7 +2,7 @@
 
 Listing, screenshots and product page header for Pausa's Mac App Store page. **Nothing has been
 submitted.** There's no Pausa app record in App Store Connect yet; the bundle ID
-`com.seriamo.pausa` is registered. The app needs the code changes below before it can pass review.
+`com.seriamo.pausa` is registered. The store build is described below.
 
 ## What's here
 
@@ -63,43 +63,72 @@ The film plays on seriamo.com/pausa as a 1280×720 web encode (`pausa-promo-web.
 poster with a play button, sound only after a press, and no autoplay. The flash in the video pulses
 at about 1.5 Hz and fades smoothly, well under the 3 flashes per second photosensitivity limit.
 
-## Before submitting: app changes
+## The store build
 
-The Mac App Store build needs these. They belong with the planned update and telemetry endpoint
-work.
+`Scripts/bundle-appstore.sh` builds the Mac App Store package. `Scripts/bundle.sh` still builds the
+Developer ID DMG for GitHub Releases. The two builds differ in these ways:
 
-1. **App Sandbox.** Add `com.apple.security.app-sandbox`, keep
-   `com.apple.security.network.client`, and drop `com.apple.security.cs.allow-unsigned-executable-memory`
-   (`Scripts/entitlements.plist`). Then check that the fullscreen detection
-   (`CGWindowListCopyWindowInfo` in `FullscreenDetector.swift`), the screen lock and unlock
-   notifications and Launch at Login (`SMAppService`) still work under the sandbox.
-2. **No self-updates.** Store builds can't check GitHub Releases or point people at a download
-   (`checkForUpdates`, `showUpdateAvailable` and `openUpdatePage` in `main.swift`). The App Store
-   handles updates. Remove them from the store build, or compile them out with a flag if the GitHub
-   build keeps them.
-3. **Telemetry, declared.** Whatever the new endpoint sends must match App Privacy, the privacy
-   policy and the last line of `description.txt`. If the new build sends what the current launch
-   ping sends (version plus a random installation ID), the App Privacy answers are:
-   - Data types: Identifiers › Device ID, and Usage Data › Product Interaction
-   - Purpose: Analytics
-   - Linked to the user: No. Used for tracking: No.
-   - If it sends anything new, update all three places.
-4. **Store packaging.** `Scripts/bundle.sh` makes a Developer ID DMG, which the store won't take.
-   The store build needs:
-   - Signing with an Apple Distribution certificate and a Mac App Store provisioning profile.
-   - A `.pkg` built with `productbuild` and a Mac Installer Distribution certificate.
-   - Upload with Transporter or `xcrun altool`.
-   - In `Info.plist`: `LSApplicationCategoryType` = `public.app-category.healthcare-fitness`,
-     `ITSAppUsesNonExemptEncryption` = `NO` (HTTPS only), and a `CFBundleVersion` build number that
-     goes up with every upload. Today it equals the marketing version.
+- **Sandboxed.** `Scripts/entitlements-appstore.plist` turns on the App Sandbox and keeps
+  `network.client`. It drops `cs.allow-unsigned-executable-memory`, which the app doesn't need. It
+  also carries the team and application identifiers that the provisioning profile requires.
+- **No self-updates.** It's built with `-DAPP_STORE`, which compiles out the updates.seriamo.com
+  check and the "Pausa vX available" menu item. The App Store delivers updates.
+- **Universal** (arm64 and x86_64), with a minimum of macOS 14.
+- **Info.plist** adds `LSApplicationCategoryType` (`public.app-category.healthcare-fitness`),
+  `ITSAppUsesNonExemptEncryption` = NO (it uses HTTPS only), `LSMinimumSystemVersion` and the
+  Xcode `DT*` keys. The build number is the git commit count, so it goes up with every upload.
+- **SDK stamp.** SwiftPM's link step records the deployment target (14.0) as the SDK version.
+  The script rewrites that to the SDK the app was actually built with, because App Store Connect
+  rejects builds from old SDKs.
+- **Signing.** It's signed with "3rd Party Mac Developer Application" (the team's Mac App
+  Distribution certificate) and the Mac App Store profile, which is embedded as
+  `Contents/embedded.provisionprofile`. The script expects the profile in
+  `~/.appstoreconnect/profiles/`. The `.pkg` is made with `productbuild` and signed with
+  "3rd Party Mac Developer Installer". The script validates the package with `altool`, and
+  `--upload` sends it.
 
-   The icon already includes the 1024 px size.
-5. **Privacy policy.** seriamo.com/privacy says Pausa "checks GitHub for updates". Update that
-   paragraph when the update check and telemetry change.
-6. **README and site.** Point the download links at the App Store once it's live.
-7. **Worth checking.** On the virtual display, the Menu Bar modes briefly drew nothing on a screen
-   whose `visibleFrame` had no menu bar inset. This was seen only on the virtual display, but it's
-   worth testing with "Displays have separate Spaces" turned off.
+```sh
+Scripts/bundle-appstore.sh            # build/appstore/Pausa.pkg, validated
+Scripts/bundle-appstore.sh --upload   # ...and uploaded
+Scripts/bundle-appstore.sh --local    # ad-hoc signed, sandboxed .app for testing on this Mac
+```
+
+`--local` uses the bundle ID `com.seriamo.pausa.localtest` for a reason. The first launch of a
+sandboxed app *moves* `~/Library/Preferences/<bundle id>.plist` into
+`~/Library/Containers/<bundle id>/`. A test build with the real ID would take the installed
+Pausa's settings with it, and macOS won't let you delete that container from the command line. The
+same move helps people switching from the GitHub build: their settings and install ID carry over
+to the App Store build.
+
+Sandbox checks, run on macOS 27.2:
+
+- The sandboxed build ran with no sandbox denials.
+- `CGWindowListCopyWindowInfo` still returns owner name, alpha and bounds for every on-screen
+  window, which is all `FullscreenDetector` uses.
+- Distributed notifications still arrive, so `com.apple.screenIsLocked` and
+  `com.apple.screenIsUnlocked` work.
+- `SMAppService.mainApp` is the supported login-item API for sandboxed apps. It's only called when
+  someone turns Launch at Login on.
+
+What the store build sends, and its App Privacy answers:
+
+- **Telemetry.** `Telemetry.recordLaunch` posts one `app_launch` event to telemetry.seriamo.com
+  with the product, app version, platform, a timestamp, an event ID and a random install ID.
+  Settings › Share Anonymous Usage turns it off and deletes the ID.
+- **App Privacy:**
+  - Data types: Identifiers › Device ID, and Usage Data › Product Interaction.
+  - Purpose: Analytics.
+  - Linked to the user: No. Used for tracking: No.
+- **Feedback.** Send Feedback… opens feedback.seriamo.com in the browser. Anything typed there is
+  entered on the web, not in the app, so it isn't app-collected data.
+- **Privacy policy.** seriamo.com/privacy already covers telemetry.seriamo.com and
+  updates.seriamo.com. Its last update was November 1, 2026.
+
+Still to check by hand: the Menu Bar flash modes with "Displays have separate Spaces" turned off.
+On the virtual capture display, they briefly drew nothing on a screen whose `visibleFrame` had no
+menu bar inset.
+
+After launch, point the README and site download links at the App Store.
 
 ## App Store Connect steps
 

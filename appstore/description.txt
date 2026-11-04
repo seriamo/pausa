@@ -6,4 +6,4 @@ Pausa is a gentle screen-break reminder for your Mac. Every 20 minutes it softly
 • Presenting? It waits. Pausa skips a reminder while a presentation, video or game is fullscreen, can stay on the screen you're using, and waits while your Mac is locked.
 • Lives in the menu bar. See when the next pause is due, pause it for a meeting or until you resume, and start it at login.
 
-Your settings stay on your Mac. Pausa sends one anonymous signal when it opens, with its version and a random ID, so we can count installs. No account, no ads and no tracking.
+Your settings stay on your Mac. Pausa sends one anonymous signal when it opens, with its version and a random ID, so we can count installs. Turn it off anytime in Settings. No account, no ads and no tracking.
