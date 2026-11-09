@@ -1,7 +1,8 @@
 # Pausa on the Mac App Store
 
 Listing, screenshots and product page header for Pausa's Mac App Store page, and how the store
-build is made. **Nothing has been submitted for review yet.**
+build is made. **Version 1.1 was submitted for App Review on November 8, 2026** (submission
+`d08eb1a8-ef85-40ce-bf93-b036e1bfd62e`). Release is manual, so it goes live only when Luis releases it.
 
 ## In App Store Connect
 
@@ -15,10 +16,8 @@ build is made. **Nothing has been submitted for review yet.**
 | Images | The five screenshots and the product page header from `out/`, as rendered from `screenshots.json` and `header.json` |
 | Signing | The Mac Installer Distribution certificate `6H2X8FV6UQ` (expires November 2027) and the profile "Pausa Mac App Store" `P3J5V8B6JS`, which goes with the Mac App Distribution certificate `J5DZQ56995` (both expire April 30, 2027) |
 
-To finish on the website before submitting:
-- the App Review contact;
-- the App Privacy answers (below);
-- Pricing and Availability (Free, all territories).
+Luis set the App Review contact, the App Privacy answers (below) and Pricing and Availability
+(Free) on the website.
 
 ## What's here
 
