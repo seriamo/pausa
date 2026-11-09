@@ -2,8 +2,8 @@
   "app": "com.seriamo.pausa",
   "locale": "en-US",
   "appInfo": {
-    "name": "Pausa",
-    "subtitle": "Screen breaks for your eyes",
+    "name": "Pausa Eye Break",
+    "subtitle": "A reminder to look away",
     "privacyPolicyUrl": "https://seriamo.com/privacy"
   },
   "categories": { "primary": "HEALTH_AND_FITNESS", "secondary": "PRODUCTIVITY" },
@@ -13,7 +13,7 @@
   },
   "storeText": {
     "descriptionFile": "description.txt",
-    "keywords": "20-20-20,eye strain,eye care,dry eyes,reminder,look away,blink,rest,timer,menu bar,vision,wellness",
+    "keywords": "20-20-20,strain,care,dry,tired,blink,rest,timer,screen,menu bar,vision,wellness,computer,desk",
     "supportUrl": "https://seriamo.com/pausa/",
     "marketingUrl": "https://seriamo.com/pausa/"
   },

@@ -1,8 +1,24 @@
 # Pausa on the Mac App Store
 
-Listing, screenshots and product page header for Pausa's Mac App Store page. **Nothing has been
-submitted.** There's no Pausa app record in App Store Connect yet; the bundle ID
-`com.seriamo.pausa` is registered. The store build is described below.
+Listing, screenshots and product page header for Pausa's Mac App Store page, and how the store
+build is made. **Nothing has been submitted for review yet.**
+
+## In App Store Connect
+
+| | |
+|---|---|
+| App | **Pausa Eye Break** (the name "Pausa" was taken), app ID `6832411313`, SKU `pausa`, bundle ID `com.seriamo.pausa` |
+| Version | 1.1, manual release, with build 18 attached (uploaded November 8, 2026) |
+| Subtitle | A reminder to look away |
+| Categories | Health & Fitness, then Productivity |
+| Listing | `listing.json`, `description.txt` and `review-notes.txt`, applied as they are in git |
+| Images | The five screenshots and the product page header from `out/`, as rendered from `screenshots.json` and `header.json` |
+| Signing | The Mac Installer Distribution certificate `6H2X8FV6UQ` (expires November 2027) and the profile "Pausa Mac App Store" `P3J5V8B6JS`, which goes with the Mac App Distribution certificate `J5DZQ56995` (both expire April 30, 2027) |
+
+To finish on the website before submitting:
+- the App Review contact;
+- the App Privacy answers (below);
+- Pricing and Availability (Free, all territories).
 
 ## What's here
 
@@ -134,10 +150,10 @@ After launch, point the README and site download links at the App Store.
 
 On the website (the API can't do these):
 
-1. Create the app with platform macOS, name Pausa, bundle ID `com.seriamo.pausa`, SKU `pausa`
-   and language English (U.S.).
-2. App Privacy: see item 3 above.
+1. Create the app (done): platform macOS, bundle ID `com.seriamo.pausa`, SKU `pausa`, English (U.S.).
+2. App Privacy: see "What the store build sends" above.
 3. Pricing and Availability: Free, all territories.
+4. App Review contact: name, phone and support@seriamo.com. This stays in App Store Connect, not in git.
 
 Everything else uses the skill's scripts. **Always pass `--platform MAC_OS`; the default is
 `IOS`.** Every script below is a dry run unless you add `--apply`.
@@ -151,11 +167,15 @@ node upload-header.mjs <repo>/appstore/out/header.png --app com.seriamo.pausa --
 node attach-build.mjs --app com.seriamo.pausa --build <n> --platform MAC_OS --wait
 ```
 
+The version string in App Store Connect must match the build's `CFBundleShortVersionString`.
+Check it before uploading a new marketing version.
+
 `review.mjs --submit` sends the app to review. Run it only when Luis says to.
 
 ## Open decisions
 
-- **Name.** "Pausa" if it's free on the store, otherwise "Pausa Eye Breaks".
+- **Screenshots.** They were captured from 1.0, so the menus don't show Send Feedback… or Share
+  Anonymous Usage. Recapture them for the next version.
 - **Categories.** Health & Fitness first, then Productivity. Swap them if Pausa should sit with
   focus tools.
 - **Age rating.** `healthOrWellnessTopics` is set to true because Pausa is an eye-strain habit
