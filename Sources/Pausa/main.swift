@@ -97,9 +97,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var activeScreenItem: NSMenuItem!
     private var shareUsageItem: NSMenuItem!
     private var aboutWindow: NSWindow?
+    #if !APP_STORE
     private var updateItem: NSMenuItem?
     private var updatePage = SeriamoEndpoints.releasesPage
     private var updateSeparator: NSMenuItem?
+    #endif
     // Stored so pause item can swap between submenu ↔ direct action
     private var storedPauseSubmenu: NSMenu!
     // Stored for NSMenuDelegate hover preview
@@ -390,8 +392,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             object: nil
         )
 
-        // Check for updates (non-blocking)
+        // Check for updates (non-blocking). The Mac App Store delivers its own updates.
+        #if !APP_STORE
         checkForUpdates()
+        #endif
     }
 
     // MARK: - Helpers
@@ -728,6 +732,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: - Update checker
 
+    #if !APP_STORE
     private func checkForUpdates() {
         if DEBUG_FAKE_UPDATE {
             showUpdateAvailable(version: "2.0")
@@ -767,6 +772,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @objc private func openUpdatePage() {
         NSWorkspace.shared.open(updatePage)
     }
+    #endif
 
     // MARK: - Screen lock
 

@@ -2,6 +2,7 @@
 .build/
 Pausa.app/
 Pausa.dmg
+build/
 
 # macOS
 .DS_Store
