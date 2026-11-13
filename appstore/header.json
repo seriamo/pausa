@@ -1,0 +1,17 @@
+{
+  "theme": "seriamo",
+  "captures": "captures",
+  "out": "out",
+  "title": "A reminder<br><em>to look away</em>",
+  "headline": { "size": 270, "lineHeight": 0.98, "tracking": -2 },
+  "cardScale": 1.3,
+  "cards": [
+    { "src": "01-hero.png", "rect": [2270, 0, 610, 60], "radius": 14, "scale": 1.4, "at": [150, 340] },
+    { "src": "02-menu.png", "rect": [2292, 58, 540, 432], "radius": 24, "at": [290, 520] },
+    { "src": "v-color-green.png", "rect": [2270, 0, 610, 60], "radius": 14, "scale": 1.4, "at": [100, 1210] },
+    { "src": "v-color-blue.png", "rect": [2270, 0, 610, 60], "radius": 14, "scale": 1.4, "at": [2850, 340] },
+    { "src": "06-pause.png", "rect": [1980, 104, 322, 332], "radius": 22, "at": [2840, 520] },
+    { "src": "04-color.png", "rect": [2292, 351, 210, 307], "radius": 22, "at": [3340, 590] },
+    { "src": "v-color-purple.png", "rect": [2270, 0, 610, 60], "radius": 14, "scale": 1.4, "at": [2930, 1210] }
+  ]
+}

@@ -79,6 +79,8 @@ enum Telemetry {
     }
 }
 
+// The Mac App Store build gets updates from the store, so it leaves the checker out.
+#if !APP_STORE
 struct AvailableUpdate: Sendable {
     let version: String
     let page: URL
@@ -115,3 +117,4 @@ enum UpdateChecker {
         return ProcessInfo.processInfo.isOperatingSystemAtLeast(required)
     }
 }
+#endif

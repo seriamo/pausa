@@ -1,0 +1,9 @@
+Pausa is a gentle screen-break reminder for your Mac. Every 20 minutes it softly lights the top of your screen: a cue to look at something 20 feet away for 20 seconds.
+
+• The 20-20-20 rule, built in. Every 20 minutes for 20 seconds is the default, and you can set the interval anywhere from 5 to 60 minutes.
+• A pause, not a takeover. The reminder glows at the edge of your screen and fades on its own. No dialog, no sound, no stolen focus, nothing to dismiss.
+• Your color, your rhythm. Pick a bar across the menu bar, a bar with a soft glow, or a glow around every edge, in six colors and three intensities, for 3 to 20 seconds.
+• Presenting? It waits. Pausa skips a reminder while a presentation, video or game is fullscreen, can stay on the screen you're using, and waits while your Mac is locked.
+• Lives in the menu bar. See when the next pause is due, pause it for a meeting or until you resume, and start it at login.
+
+Your settings stay on your Mac. Pausa sends one anonymous signal when it opens, with its version and a random ID, so we can count installs. Turn it off anytime in Settings. No account, no ads and no tracking.

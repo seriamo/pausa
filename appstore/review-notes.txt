@@ -1,0 +1,17 @@
+Pausa is a menu bar app (LSUIElement), so it has no Dock icon and no main window. After launch, look for the eye icon in the menu bar and click it.
+
+What it does: every N minutes (20 by default) it shows a borderless, click-through overlay window at the top or edges of each screen for a few seconds, then hides it. The overlay ignores mouse events and never takes focus. Settings are stored in UserDefaults. Launch at Login uses SMAppService.mainApp. Before showing a reminder it reads the on-screen window list (CGWindowListCopyWindowInfo, owner names and bounds only) to skip the reminder when a fullscreen app such as a presentation is in front; it doesn't record or read screen contents.
+
+Network: when the app opens it sends one anonymous HTTPS request to our own server (telemetry.seriamo.com) with the app version, the platform and a random ID created on the device. Settings → Share Anonymous Usage turns it off and deletes the ID. Send Feedback… opens our feedback form (feedback.seriamo.com) in the browser. Nothing else leaves the Mac. This build is sandboxed and has no update checker; updates come from the Mac App Store.
+
+How to review it (no account needed):
+1. Click the eye icon. The first line shows when the next reminder is due.
+2. Settings → Test Flash Now shows a reminder immediately. The menu bar icon shows the seconds left.
+3. Settings → Flash Mode and Flash Color: hover an option to preview it, click to choose it.
+4. Settings → Intensity and Duration sliders change how strong and how long the reminder is.
+5. Drag the Interval slider to 5 min to see a scheduled reminder sooner.
+6. Pause → Pause for 5 Minutes pauses reminders; the menu then offers Resume.
+7. Settings → Pause During Fullscreen Apps (on by default): put any app in fullscreen and reminders are skipped while it's in front.
+8. Settings → Share Anonymous Usage (on by default) turns the launch count off.
+
+Pausa has no accounts, no sign-in, no in-app purchases and no hidden features.
