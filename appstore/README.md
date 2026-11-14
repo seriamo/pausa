@@ -2,7 +2,9 @@
 
 Listing, screenshots and product page header for Pausa's Mac App Store page, and how the store
 build is made. **Version 1.1 was submitted for App Review on November 8, 2026** (submission
-`d08eb1a8-ef85-40ce-bf93-b036e1bfd62e`). Release is manual, so it goes live only when Luis releases it.
+`d08eb1a8-ef85-40ce-bf93-b036e1bfd62e`). App Review rejected it on November 13 and we replied on
+November 14 instead of resubmitting; see "App Review" below. Release is manual, so it goes live only
+when Luis releases it.
 
 ## In App Store Connect
 
@@ -170,6 +172,26 @@ The version string in App Store Connect must match the build's `CFBundleShortVer
 Check it before uploading a new marketing version.
 
 `review.mjs --submit` sends the app to review. Run it only when Luis says to.
+
+## App Review
+
+**November 13, 2026: 1.1 (18) rejected** under 4.3(a) and 4.3(b) (Design: Spam) and 4.2.6 (App
+Generation Services). Apple didn't name a defect. It asked nine questions: what the app does, who
+it's for, the gap it fills, beta testing, whether it's standalone or part of a suite, whether it could
+be an in-app purchase in another app, code shared with our other apps, code or SDKs shared with
+third parties, and whether it was built for a client.
+
+**November 14: replied in Resolution Center** without changing the build or resubmitting. The
+reply answers all nine questions from the shipped code and the release history: a native
+Swift/AppKit app with no third-party code, public on GitHub since April 2026 (0.5, 0.5.1, 1.0,
+1.1), feedback applied (fullscreen skip, the 0.5.1 countdown fix), standalone, nothing shared with
+Punti Offers, and built by Seriamo directly.
+
+- The Reply box takes at most 4,000 characters, and the API can't post these messages.
+- If Apple accepts the answers, the version can be approved without a new build. If it asks for
+  changes, those need a new build numbered above 18, and then **Resubmit to App Review** (with
+  Luis's go-ahead).
+- If Apple holds to 4.3, the next step is an appeal to the App Review Board.
 
 ## Open decisions
 
