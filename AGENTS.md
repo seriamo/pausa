@@ -52,8 +52,9 @@ The Swift package has no tests. Windows UI is verified by `Pausa.exe --smoke-tes
 - **Secrets stay out of git:** the App Store Connect API key and profile live in
   `~/.appstoreconnect/`, signing keys in the login keychain, the notarization key under `docs/certs/`
   (git-ignored). Never print, copy or commit them.
-- `.gitignore` excludes `*.png`, `*.mp4`, `docs/`, `out/`, `build/`, `CLAUDE.md` and `.agents/`. Put new
-  durable docs outside `docs/`, and add a rule or `git add -f` for images that must be tracked.
+- `.gitignore` excludes `*.png`, `*.mp4`, `docs/`, `documents/`, `build/`, `CLAUDE.md` and `.agents/`
+  (`appstore/.gitignore` adds `out/`). `documents/` is the local, Synology-backed folder of non-git artifacts
+  (see `HANDOFF.md`). Put new durable docs elsewhere, and add a rule or `git add -f` for images that must be tracked.
 - Commit trailer: `Co-authored-by: Copilot App <223556219+Copilot@users.noreply.github.com>`.
   Don't force-push, and open a PR only when asked.
 - The code makes three network calls, all to Seriamo hosts: `telemetry.seriamo.com` (one anonymous

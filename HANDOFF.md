@@ -18,6 +18,8 @@ file has the status, the history behind the decisions, the pitfalls and the next
 3. Don't change anything in App Store Connect, resubmit, cancel, release or message Apple without
    Luis's explicit approval each time.
 4. Before any Mac App Store build, read the **build-number pitfall** below.
+5. Files that aren't in git (screenshots, promo film, skills, session notes) are backed up in `documents/` of the
+   Synology-synced checkout; see "Artifacts: what is where".
 
 ## Project
 
@@ -185,7 +187,7 @@ the skill describes). GitHub Actions: variables `AZURE_SIGNING_ACCOUNT`, `AZURE_
 | App Store Connect API key config and `.p8` | `~/.appstoreconnect/seriamo.json`, `~/.appstoreconnect/private_keys/` | skill scripts, `altool` validate and upload |
 | Mac App Store provisioning profile | `~/.appstoreconnect/profiles/Pausa_Mac_App_Store.provisionprofile` (the script's `PROFILE` default) | store build. It can be re-downloaded from the developer portal |
 | Signing identities and their private keys | login keychain: "3rd Party Mac Developer Application", "3rd Party Mac Developer Installer", "Developer ID Application" (all Masieri Ventures LLC, team `FVAPC8DNSW`) | store build, DMG |
-| Notarization key | `docs/certs/AuthKey_<id>.p8`, git-ignored (`Scripts/bundle.sh` names the key ID and path) | `bundle.sh` notarization. Not present in this worktree; unverified where the original is |
+| Notarization key | `docs/certs/AuthKey_<id>.p8`, git-ignored (`Scripts/bundle.sh` names the key ID and path) | `bundle.sh` notarization. Not in this worktree. The original is in the stale Synology checkout `~/Library/CloudStorage/SynologyDrive-home/ClaudeCode/projects/pausa/docs/certs/` (verified 2026-11-16); copy it to `docs/certs/` in a fresh clone |
 | Skills | `~/.copilot/skills/seriamo-app-store`, `seriamo-product-sites`, `seriamo-product-video` | ASC scripts, site and video work |
 
 **Needs reconfiguring on a new computer:**
@@ -238,19 +240,25 @@ earlier sessions. Build 18 was built, validated, uploaded and processed as `VALI
 In git (this repo): everything under `Sources/`, `windows/`, `Scripts/`, `appstore/` (listing, configs, review
 history, the reply text) and the docs.
 
-**Not in git, worth backing up** (sizes from 2026-11-16):
+**Not in git. Backed up on 2026-11-16** to `documents/` in the Synology-synced checkout
+`~/Library/CloudStorage/SynologyDrive-home/ClaudeCode/projects/pausa/documents/` (git-excluded there, and
+`documents/` is in this repo's `.gitignore`). That folder has its own `README.md` with the restore steps. It holds
+everything in the table below except the credentials, and Synology sync needs Luis's VPN, so check that it finished
+before relying on it. Original locations and sizes:
 
-| Artifact | Location | Notes |
+| Artifact | Original location | Notes |
 |---|---|---|
-| Listing screenshots and header (rendered) | `appstore/out/` (14 MB) | Re-renderable from `captures/`; also stored in App Store Connect |
-| Screenshot source captures | `appstore/captures/` (13 MB) | The capture rig was throwaway, so these aren't easily recreated. Copies also exist in the sibling worktree `…/pausa/lmasieri-bookish-memory/appstore/` |
-| Promo video renders | `~/videos/pausa-promo/renders/` (53 MB): `pausa-promo.mp4`, `pausa-promo-github.mp4`, `pausa-hero.png`, `pausa-social.png` | The film is live on `seriamo.com/pausa` as a web encode. Music is Mixkit "A Baby Story" (free licence, no attribution; licence notes in `appstore/README.md`) |
-| Promo video project | `~/videos/pausa-brief/` (271 MB): `video.json`, `patch_spotlight.py`, `patch_flash.py`, `make_flash_assets.py`, `flash/`, `screens/`, `music/` | Built with the `seriamo-product-video` skill |
-| Windows CI artifact copy | `~/Downloads/Pausa-Windows/` (218 MB) | Redundant: the same builds are on the GitHub release |
-| Session record | `~/.copilot/session-state/e151292e-efd3-402d-b75e-4165d6f46abb/` | Checkpoints, the two reply drafts and screenshots from the session. This handoff replaces the need for it; keep it only as an archive |
+| Listing screenshots and header (rendered) | `appstore/out/` (14 MB) | Re-renderable from `captures/`; also stored in App Store Connect. Backup: `documents/appstore/out/` |
+| Screenshot source captures | `appstore/captures/` (13 MB) | The capture rig was throwaway, so these aren't easily recreated. Backup: `documents/appstore/captures/`. The sibling worktree's copy is identical |
+| Promo project and renders | `~/videos/pausa-promo/` (53 MB; `renders/` has `pausa-promo.mp4`, `pausa-promo-github.mp4`, `pausa-hero.png`, `pausa-social.png`) | The film is live on `seriamo.com/pausa` as a web encode. Music is Mixkit "A Baby Story" (free licence, no attribution; licence notes in `appstore/README.md`). Backup: `documents/promo/pausa-promo/` |
+| Promo video inputs | `~/videos/pausa-brief/` (271 MB): `video.json`, `patch_spotlight.py`, `patch_flash.py`, `make_flash_assets.py`, `flash/`, `screens/`, `music/` | Built with the `seriamo-product-video` skill. Backup: `documents/promo/pausa-brief/` |
+| Seriamo skills | `~/.copilot/skills/seriamo-app-store`, `seriamo-product-sites`, `seriamo-product-video` | Includes the local `upload-header.mjs` edit. Backup: `documents/skills/` (without `node_modules`; run `npm install`) |
+| Windows CI artifact copy | `~/Downloads/Pausa-Windows/` (218 MB) | An unsigned pre-release build. Its hashes **don't match** the published `windows-v1.0.0` assets, which are authoritative. Backup: `documents/windows/ci-artifact-pre-release/` |
+| Session record | `~/.copilot/session-state/e151292e-efd3-402d-b75e-4165d6f46abb/` | Checkpoints, the two reply drafts and screenshots. This handoff replaces the need for it. Backup: `documents/session/` (checkpoints and `files/` only; the raw transcript is deliberately left out) |
 
-**Needs a separate encrypted backup, never git:** everything in the credentials table above, above all the
-`~/.appstoreconnect/` folder and exported `.p12` files for the three signing identities.
+**Needs a separate encrypted backup, never git and not in `documents/`:** everything in the credentials table
+above, above all the `~/.appstoreconnect/` folder and exported `.p12` files for the three signing identities.
+The notarization key is the exception: a copy is already in the stale Synology checkout's `docs/certs/`.
 
 ## Git state when this was written
 

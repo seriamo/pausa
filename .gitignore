@@ -15,6 +15,7 @@ build/
 
 # Internal
 docs/
+documents/
 CLAUDE.md
 .claude/
 .superpowers/
