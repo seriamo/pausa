@@ -30,6 +30,7 @@ Luis set the App Review contact, the App Privacy answers (below) and Pricing and
 | `review-notes.txt` | Notes for App Review (no account, how to trigger a reminder, what the network request is) |
 | `screenshots.json` | Config for the five 2880×1800 Mac screenshots |
 | `header.json` | Config for the 3840×1646 product page header (shown on macOS 27 and later) |
+| `app-review-reply-2026-11-14.md` | The Resolution Center reply as sent (see [App Review](#app-review)) |
 | `captures/` | Source captures (not in git; PNGs are ignored) |
 | `out/` | Rendered screenshots, header and `preview.html` (not in git) |
 
@@ -139,7 +140,8 @@ What the store build sends, and its App Privacy answers:
 - **Feedback.** Send Feedback… opens feedback.seriamo.com in the browser. Anything typed there is
   entered on the web, not in the app, so it isn't app-collected data.
 - **Privacy policy.** seriamo.com/privacy already covers telemetry.seriamo.com and
-  updates.seriamo.com. Its last update was November 1, 2026.
+  updates.seriamo.com. It was last updated November 11, 2026 (checked November 16). Its Pausa
+  section says the app checks updates.seriamo.com, which the store build doesn't do.
 
 Still to check by hand: the Menu Bar flash modes with "Displays have separate Spaces" turned off.
 On the virtual capture display, they briefly drew nothing on a screen whose `visibleFrame` had no
@@ -187,6 +189,8 @@ Swift/AppKit app with no third-party code, public on GitHub since April 2026 (0.
 1.1), feedback applied (fullscreen skip, the 0.5.1 countdown fix), standalone, nothing shared with
 Punti Offers, and built by Seriamo directly.
 
+- The text as sent is [`app-review-reply-2026-11-14.md`](app-review-reply-2026-11-14.md). Status and
+  next steps for a new agent are in [`../HANDOFF.md`](../HANDOFF.md).
 - The Reply box takes at most 4,000 characters, and the API can't post these messages.
 - If Apple accepts the answers, the version can be approved without a new build. If it asks for
   changes, those need a new build numbered above 18, and then **Resubmit to App Review** (with
