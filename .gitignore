@@ -13,8 +13,11 @@ build/
 *.gif
 *.png
 
-# Internal
+# Internal (private release docs, never public)
+/appstore/
+/HANDOFF.md
 docs/
+documents/
 CLAUDE.md
 .claude/
 .superpowers/
